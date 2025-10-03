@@ -39,14 +39,14 @@
 
         .side-text.left {
             left: 25px;
-            top: 50%;
+            top: 100%;
             transform: translateY(-50%) rotate(-90deg);
             transform-origin: left center;
         }
 
         .side-text.right {
             right: 25px;
-            top: 50%;
+            top: 100%;
             transform: translateY(-50%) rotate(90deg);
             transform-origin: right center;
         }
@@ -199,8 +199,8 @@
     <canvas id="bgCanvas" class="background-grid" width="1920" height="1080"></canvas>
 
     <!-- 側邊文字 -->
-    <div class="side-text left">Lily  Haewon  Sullyoon  Bae  Jiwoo  Kyujin  |  Lily  Haewon  Sullyoon  Bae  Jiwoo  Kyujin</div>
-    <div class="side-text right">Lily  Haewon  Sullyoon  Bae  Jiwoo  Kyujin  |  Lily  Haewon  Sullyoon  Bae  Jiwoo  Kyujin</div>
+    <div class="side-text left">Lily  Haewon  Sullyoon  Bae  Jiwoo  Kyujin    Lily  Haewon  Sullyoon  Bae  Jiwoo  Kyujin</div>
+    <div class="side-text right">Lily  Haewon  Sullyoon  Bae  Jiwoo  Kyujin    Lily  Haewon  Sullyoon  Bae  Jiwoo  Kyujin</div>
 
     <!-- 遊戲主體 -->
     <div class="game-wrapper">
@@ -637,5 +637,13 @@
             loadImages();
         });
     </script>
+
+    <!-- 版權聲明 -->
+    <div style="position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
+                font-size: 12px; color: #666; text-align: center; z-index: 1000;">
+        © 2025 Watermelon Game - NMIXX Fan Project<br>
+        Images © JYP Entertainment. For non-commercial use only.
+    </div>
+
 </body>
 </html>
