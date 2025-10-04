@@ -2,8 +2,8 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Watermelon Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Watermelon Game - NMIXX</title>
     <style>
         * {
             margin: 0;
@@ -14,74 +14,111 @@
             font-family: 'Arial', sans-serif;
             background: #E8E8E8;
             overflow: hidden;
-            width: 1920px;
-            height: 1080px;
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
         .background-grid {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
-            width: 1920px;
-            height: 1080px;
+            width: 100vw;
+            height: 100vh;
             z-index: 0;
         }
         .side-text {
-            position: absolute;
-            font-size: 16px;
+            position: fixed;
+            font-size: 12px;
             font-weight: bold;
             color: #333;
             white-space: nowrap;
-            letter-spacing: 4px;
+            letter-spacing: 2px;
+            display: none;
         }
-        .side-text.left {
-            left: 25px;
-            top: 100%;
-            transform: translateY(-50%) rotate(-90deg);
-            transform-origin: left center;
-        }
-        .side-text.right {
-            right: 25px;
-            top: 100%;
-            transform: translateY(-50%) rotate(90deg);
-            transform-origin: right center;
+        @media (min-width: 768px) and (orientation: landscape) {
+            .side-text {
+                display: block;
+                font-size: 16px;
+                letter-spacing: 4px;
+            }
+            .side-text.left {
+                left: 15px;
+                top: 50%;
+                transform: translateY(-50%) rotate(-90deg);
+                transform-origin: left center;
+            }
+            .side-text.right {
+                right: 15px;
+                top: 50%;
+                transform: translateY(-50%) rotate(90deg);
+                transform-origin: right center;
+            }
         }
         .game-wrapper {
-            position: absolute;
-            top: 65px;
-            left: 85px;
-            width: 1750px;
-            height: 950px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw;
+            height: 100vh;
+            max-width: 1750px;
+            max-height: 950px;
             z-index: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+        }
+        @media (orientation: portrait) {
+            .game-wrapper {
+                padding: 5px;
+            }
         }
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 50px;
-            margin-bottom: 25px;
+            padding: 10px 20px;
+            margin-bottom: 10px;
+        }
+        @media (orientation: landscape) and (min-width: 768px) {
+            .header {
+                padding: 0 50px;
+                margin-bottom: 25px;
+            }
         }
         h1 {
-            font-size: 60px;
+            font-size: 28px;
             color: #5A4A3A;
             font-weight: bold;
-            letter-spacing: 3px;
+            letter-spacing: 1px;
+        }
+        @media (orientation: landscape) and (min-width: 768px) {
+            h1 {
+                font-size: 60px;
+                letter-spacing: 3px;
+            }
         }
         .score-display {
-            font-size: 60px;
+            font-size: 28px;
             font-weight: bold;
             color: #5A4A3A;
+        }
+        @media (orientation: landscape) and (min-width: 768px) {
+            .score-display {
+                font-size: 60px;
+            }
         }
         .game-container {
             position: relative;
-            width: 1750px;
-            height: 850px;
+            flex: 1;
             background: #F5F5F5;
             border-radius: 10px;
             overflow: hidden;
+            min-height: 0;
         }
         .dropper-line {
             position: absolute;
-            top: 25px;
+            top: 8%;
             left: 0;
             width: 100%;
             height: 1px;
@@ -101,6 +138,8 @@
             top: 0;
             left: 0;
             cursor: pointer;
+            width: 100%;
+            height: 100%;
         }
         .loading-overlay {
             position: absolute;
@@ -116,27 +155,47 @@
             z-index: 100;
         }
         .loading-overlay h2 {
-            font-size: 40px;
+            font-size: 24px;
             color: #333;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+        }
+        @media (min-width: 768px) {
+            .loading-overlay h2 {
+                font-size: 40px;
+                margin-bottom: 20px;
+            }
         }
         .loading-overlay p {
-            font-size: 25px;
+            font-size: 16px;
             color: #666;
+        }
+        @media (min-width: 768px) {
+            .loading-overlay p {
+                font-size: 25px;
+            }
         }
         button {
             background: #5A8FD4;
             color: white;
             border: none;
-            padding: 20px 50px;
-            font-size: 30px;
+            padding: 15px 35px;
+            font-size: 20px;
             font-weight: bold;
             border-radius: 10px;
             cursor: pointer;
             transition: background 0.3s;
         }
+        @media (min-width: 768px) {
+            button {
+                padding: 20px 50px;
+                font-size: 30px;
+            }
+        }
         button:hover {
             background: #4A7FC4;
+        }
+        button:active {
+            background: #3A6FB4;
         }
         .game-over-overlay {
             position: absolute;
@@ -155,38 +214,80 @@
             display: flex;
         }
         .game-over-text {
-            font-size: 60px;
+            font-size: 36px;
             color: white;
             font-weight: bold;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+        }
+        @media (min-width: 768px) {
+            .game-over-text {
+                font-size: 60px;
+                margin-bottom: 30px;
+            }
         }
         .final-score {
-            font-size: 40px;
+            font-size: 24px;
             color: white;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
+        }
+        @media (min-width: 768px) {
+            .final-score {
+                font-size: 40px;
+                margin-bottom: 40px;
+            }
         }
         .error-message {
             color: #FF0000;
-            font-size: 20px;
-            margin-top: 20px;
+            font-size: 14px;
+            margin-top: 15px;
             text-align: center;
+            padding: 0 20px;
+        }
+        @media (min-width: 768px) {
+            .error-message {
+                font-size: 20px;
+                margin-top: 20px;
+            }
         }
         .control-hint {
             position: absolute;
-            bottom: 20px;
+            bottom: 15px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 18px;
+            font-size: 14px;
             color: #666;
             text-align: center;
             z-index: 5;
             pointer-events: none;
         }
+        @media (min-width: 768px) {
+            .control-hint {
+                font-size: 18px;
+                bottom: 20px;
+            }
+        }
+        .copyright {
+            position: fixed;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: #666;
+            text-align: center;
+            z-index: 1000;
+            white-space: nowrap;
+        }
+        @media (min-width: 768px) {
+            .copyright {
+                font-size: 12px;
+                bottom: 10px;
+            }
+        }
     </style>
 </head>
 <body>
     <!-- 背景格子 -->
-    <canvas id="bgCanvas" class="background-grid" width="1920" height="1080"></canvas>
+    <canvas id="bgCanvas" class="background-grid"></canvas>
     <!-- 側邊文字 -->
     <div class="side-text left">Lily  Haewon  Sullyoon  Bae  Jiwoo  Kyujin    Lily  Haewon  Sullyoon  Bae  Jiwoo  Kyujin</div>
     <div class="side-text right">Lily  Haewon  Sullyoon  Bae  Jiwoo  Kyujin    Lily  Haewon  Sullyoon  Bae  Jiwoo  Kyujin</div>
@@ -196,9 +297,9 @@
             <h1>Watermelon Game</h1>
             <div class="score-display" id="scoreDisplay">0</div>
         </div>
-        <div class="game-container">
+        <div class="game-container" id="gameContainer">
             <div class="dropper-line"></div>
-            <canvas id="gameCanvas" width="1750" height="850"></canvas>
+            <canvas id="gameCanvas"></canvas>
             <div class="control-hint">點擊螢幕或按空白鍵投放</div>
             <!-- 載入介面 -->
             <div class="loading-overlay" id="loadingOverlay">
@@ -214,37 +315,82 @@
             </div>
         </div>
     </div>
+    <!-- 版權聲明 -->
+    <div class="copyright">
+        © 2025 Watermelon Game - NMIXX Fan Project<br>
+        Images © JYP Entertainment. For non-commercial use only.
+    </div>
     <script>
-        // 繪製背景格子 (275x275 符合1920x1080的比例)
+        // 響應式背景格子
         const bgCanvas = document.getElementById('bgCanvas');
         const bgCtx = bgCanvas.getContext('2d');
-        const gridSize = 275;
-        bgCtx.fillStyle = '#E8E8E8';
-        bgCtx.fillRect(0, 0, 1920, 1080);
-        for (let x = 0; x < 1920; x += gridSize) {
-            for (let y = 0; y < 1080; y += gridSize) {
-                bgCtx.strokeStyle = '#D0D0D0';
-                bgCtx.lineWidth = 1;
-                bgCtx.strokeRect(x, y, gridSize, gridSize);
+        
+        function drawBackground() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            bgCanvas.width = width;
+            bgCanvas.height = height;
+            
+            const gridSize = Math.min(width, height) / 4;
+            bgCtx.fillStyle = '#E8E8E8';
+            bgCtx.fillRect(0, 0, width, height);
+            
+            for (let x = 0; x < width; x += gridSize) {
+                for (let y = 0; y < height; y += gridSize) {
+                    bgCtx.strokeStyle = '#D0D0D0';
+                    bgCtx.lineWidth = 1;
+                    bgCtx.strokeRect(x, y, gridSize, gridSize);
+                }
             }
         }
+        
+        drawBackground();
+        window.addEventListener('resize', drawBackground);
+        
         // 遊戲設定
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        const GAME_WIDTH = 1750;
-        const GAME_HEIGHT = 750;
-        const WALL_THICKNESS = 10;
-        const DANGER_LINE_Y = 100;
-        const DROP_Y = 60;
-        const GRAVITY = 0.6;
-        const BOUNCE = 0.3;
-        const FRICTION = 0.98;
-        // 調整尺寸 - 縮小每級之間的差異，增大最小圓形
-        const SIZES = [];
-        SIZES[0] = 37.5;  // 最小圓形從 40 改成 80 (放大一倍)
-        for (let i = 1; i < 24; i++) {
-            SIZES[i] = SIZES[i-1] * 1.1;  // 倍率從 1.5 改成 1.1 (縮小級距差異)
+        const gameContainer = document.getElementById('gameContainer');
+        
+        let GAME_WIDTH, GAME_HEIGHT, WALL_THICKNESS, DANGER_LINE_Y, DROP_Y;
+        let GRAVITY, BOUNCE, FRICTION;
+        let SIZES = [];
+        
+        function initGameDimensions() {
+            const containerRect = gameContainer.getBoundingClientRect();
+            GAME_WIDTH = containerRect.width;
+            GAME_HEIGHT = containerRect.height;
+            
+            canvas.width = GAME_WIDTH;
+            canvas.height = GAME_HEIGHT;
+            
+            // 根據螢幕大小調整參數
+            const scale = Math.min(GAME_WIDTH / 600, GAME_HEIGHT / 800);
+            
+            WALL_THICKNESS = 10 * scale;
+            DANGER_LINE_Y = GAME_HEIGHT * 0.08;
+            DROP_Y = GAME_HEIGHT * 0.05;
+            GRAVITY = 0.6 * scale;
+            BOUNCE = 0.3;
+            FRICTION = 0.98;
+            
+            // 調整圓形大小
+            SIZES = [];
+            const baseSize = Math.min(GAME_WIDTH, GAME_HEIGHT) * 0.035;
+            SIZES[0] = baseSize;
+            for (let i = 1; i < 24; i++) {
+                SIZES[i] = SIZES[i-1] * 1.1;
+            }
         }
+        
+        initGameDimensions();
+        window.addEventListener('resize', () => {
+            initGameDimensions();
+            if (gameRunning) {
+                drawGame();
+            }
+        });
+        
         const SCORES = Array.from({ length: 24 }, (_, i) => (i + 1) * 10);
         let images = [];
         let circles = [];
@@ -258,11 +404,13 @@
         let dropCooldown = 0;
         let droppingCircle = null;
         let gameLoopInterval = null;
+        
         // 自動載入圖片
         function loadImages() {
             let loadedCount = 0;
             let errorCount = 0;
             images = new Array(24);
+            
             for (let i = 1; i <= 24; i++) {
                 const img = new Image();
                 img.onload = function() {
@@ -276,11 +424,11 @@
                 img.onerror = function() {
                     errorCount++;
                     console.error(`無法載入圖片: images/${i}.png`);
-                    // 使用備用顏色圓形
-                    const canvas = document.createElement('canvas');
-                    canvas.width = 200;
-                    canvas.height = 200;
-                    const ctx = canvas.getContext('2d');
+                    
+                    const fallbackCanvas = document.createElement('canvas');
+                    fallbackCanvas.width = 200;
+                    fallbackCanvas.height = 200;
+                    const fallbackCtx = fallbackCanvas.getContext('2d');
                     const colors = [
                         '#FF6B6B', '#FFA06B', '#FFD06B', '#F0FF6B',
                         '#B0FF6B', '#6BFF85', '#6BFFC4', '#6BF0FF',
@@ -289,15 +437,16 @@
                         '#FFD32A', '#C7FF3D', '#7BFF7B', '#3DFFB8',
                         '#3DD5FF', '#3D7BFF', '#8B3DFF', '#D53DFF'
                     ];
-                    ctx.fillStyle = colors[i - 1];
-                    ctx.beginPath();
-                    ctx.arc(100, 100, 90, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.fillStyle = '#000';
-                    ctx.font = 'bold 40px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText(i, 100, 100);
+                    fallbackCtx.fillStyle = colors[i - 1];
+                    fallbackCtx.beginPath();
+                    fallbackCtx.arc(100, 100, 90, 0, Math.PI * 2);
+                    fallbackCtx.fill();
+                    fallbackCtx.fillStyle = '#000';
+                    fallbackCtx.font = 'bold 40px Arial';
+                    fallbackCtx.textAlign = 'center';
+                    fallbackCtx.textBaseline = 'middle';
+                    fallbackCtx.fillText(i, 100, 100);
+                    
                     const fallbackImg = new Image();
                     fallbackImg.onload = function() {
                         images[i - 1] = fallbackImg;
@@ -313,11 +462,12 @@
                             }, 2000);
                         }
                     };
-                    fallbackImg.src = canvas.toDataURL();
+                    fallbackImg.src = fallbackCanvas.toDataURL();
                 };
                 img.src = `images/${i}.png`;
             }
         }
+        
         class Circle {
             constructor(x, y, sizeIndex, isDropping = false) {
                 this.x = x;
@@ -331,8 +481,10 @@
                 this.dropTimer = 0;
                 this.settled = false;
             }
+            
             update() {
                 if (this.merging) return;
+                
                 if (this.isDropping) {
                     this.dropTimer++;
                     if (this.dropTimer > 30) {
@@ -340,14 +492,15 @@
                     }
                     this.vy += GRAVITY * 0.5;
                 } else {
-                    // 持續計時,即使不在dropping狀態
                     this.dropTimer++;
                     this.vy += GRAVITY;
                 }
+                
                 this.vx *= FRICTION;
                 this.vy *= FRICTION;
                 this.x += this.vx;
                 this.y += this.vy;
+                
                 if (this.x - this.radius < WALL_THICKNESS) {
                     this.x = WALL_THICKNESS + this.radius;
                     this.vx *= -BOUNCE;
@@ -360,6 +513,7 @@
                     this.y = GAME_HEIGHT - WALL_THICKNESS - this.radius;
                     this.vy *= -BOUNCE;
                     this.vx *= 0.85;
+                    
                     if (Math.abs(this.vy) < 0.5 && Math.abs(this.vx) < 0.5) {
                         this.settled = true;
                         this.vy = 0;
@@ -367,11 +521,13 @@
                     }
                 }
             }
+            
             draw(ctx) {
                 ctx.save();
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                 ctx.clip();
+                
                 const img = images[this.sizeIndex];
                 ctx.drawImage(
                     img,
@@ -381,34 +537,42 @@
                     this.radius * 2
                 );
                 ctx.restore();
+                
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                 ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
                 ctx.lineWidth = 2;
                 ctx.stroke();
             }
+            
             collidesWith(other) {
                 const dx = this.x - other.x;
                 const dy = this.y - other.y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 return distance < this.radius + other.radius;
             }
+            
             resolveCollision(other) {
                 const dx = other.x - this.x;
                 const dy = other.y - this.y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 if (distance === 0) return;
+                
                 const overlap = this.radius + other.radius - distance;
                 const nx = dx / distance;
                 const ny = dy / distance;
+                
                 this.x -= nx * overlap * 0.5;
                 this.y -= ny * overlap * 0.5;
                 other.x += nx * overlap * 0.5;
                 other.y += ny * overlap * 0.5;
+                
                 const dvx = other.vx - this.vx;
                 const dvy = other.vy - this.vy;
                 const dotProduct = dvx * nx + dvy * ny;
+                
                 if (dotProduct > 0) return;
+                
                 const impulse = dotProduct * BOUNCE;
                 this.vx += impulse * nx;
                 this.vy += impulse * ny;
@@ -416,32 +580,39 @@
                 other.vy -= impulse * ny;
             }
         }
+        
         function checkMerge() {
             for (let i = 0; i < circles.length; i++) {
                 if (circles[i].merging || circles[i].isDropping) continue;
+                
                 for (let j = i + 1; j < circles.length; j++) {
                     if (circles[j].merging || circles[j].isDropping) continue;
+                    
                     if (circles[i].sizeIndex === circles[j].sizeIndex &&
                         circles[i].collidesWith(circles[j])) {
                         const newSizeIndex = circles[i].sizeIndex + 1;
+                        
                         if (newSizeIndex < 24) {
                             const midX = (circles[i].x + circles[j].x) / 2;
                             const midY = (circles[i].y + circles[j].y) / 2;
+                            
                             circles[i].merging = true;
                             circles[j].merging = true;
                             circles.push(new Circle(midX, midY, newSizeIndex, false));
+                            
                             score += SCORES[newSizeIndex];
                             document.getElementById('scoreDisplay').textContent = score;
                         }
+                        
                         circles = circles.filter(c => !c.merging);
                         return;
                     }
                 }
             }
         }
+        
         function checkGameOver() {
             for (let circle of circles) {
-                // 排除剛投放的圓形 (dropTimer < 60 表示剛投放不到1秒)
                 if (!circle.isDropping && circle.dropTimer > 60 &&
                     circle.y - circle.radius < DANGER_LINE_Y) {
                     gameOver = true;
@@ -453,29 +624,36 @@
             }
             return false;
         }
+        
         function dropCircle() {
             if (!canDrop || droppingCircle || gameOver) return;
+            
             droppingCircle = new Circle(dropperX, DROP_Y, nextCircleSize, true);
             circles.push(droppingCircle);
             nextCircleSize = Math.floor(Math.random() * 16);
             canDrop = false;
             dropCooldown = 40;
+            
             setTimeout(() => {
                 droppingCircle = null;
             }, 500);
         }
-        function gameLoop() {
-            if (!gameRunning) return;
+        
+        function drawGame() {
             ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
             ctx.fillStyle = '#F5F5F5';
             ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+            
             ctx.fillStyle = '#CCCCCC';
             ctx.fillRect(0, 0, WALL_THICKNESS, GAME_HEIGHT);
             ctx.fillRect(GAME_WIDTH - WALL_THICKNESS, 0, WALL_THICKNESS, GAME_HEIGHT);
             ctx.fillRect(0, GAME_HEIGHT - WALL_THICKNESS, GAME_WIDTH, WALL_THICKNESS);
+            
             if (!gameOver) {
-                dropperX += dropperDirection;
+                const speed = Math.min(GAME_WIDTH, GAME_HEIGHT) * 0.004;
+                dropperX += dropperDirection * speed;
                 const previewRadius = SIZES[nextCircleSize];
+                
                 if (dropperX - previewRadius < WALL_THICKNESS + 5) {
                     dropperX = WALL_THICKNESS + previewRadius + 5;
                     dropperDirection = Math.abs(dropperDirection);
@@ -484,11 +662,13 @@
                     dropperX = GAME_WIDTH - WALL_THICKNESS - previewRadius - 5;
                     dropperDirection = -Math.abs(dropperDirection);
                 }
+                
                 ctx.save();
                 ctx.globalAlpha = 0.5;
                 ctx.beginPath();
                 ctx.arc(dropperX, DROP_Y, previewRadius, 0, Math.PI * 2);
                 ctx.clip();
+                
                 const previewImg = images[nextCircleSize];
                 ctx.drawImage(
                     previewImg,
@@ -498,18 +678,22 @@
                     previewRadius * 2
                 );
                 ctx.restore();
+                
                 ctx.beginPath();
                 ctx.arc(dropperX, DROP_Y, previewRadius, 0, Math.PI * 2);
                 ctx.strokeStyle = '#666';
                 ctx.lineWidth = 2;
                 ctx.stroke();
+                
                 if (dropCooldown > 0) {
                     dropCooldown--;
                     if (dropCooldown === 0) {
                         canDrop = true;
                     }
                 }
+                
                 circles.forEach(circle => circle.update());
+                
                 for (let i = 0; i < circles.length; i++) {
                     for (let j = i + 1; j < circles.length; j++) {
                         if (circles[i].collidesWith(circles[j])) {
@@ -517,12 +701,21 @@
                         }
                     }
                 }
+                
                 checkMerge();
                 checkGameOver();
             }
+            
             circles.forEach(circle => circle.draw(ctx));
         }
+        
+        function gameLoop() {
+            if (!gameRunning) return;
+            drawGame();
+        }
+        
         function startGame() {
+            initGameDimensions();
             circles = [];
             score = 0;
             gameOver = false;
@@ -533,15 +726,17 @@
             dropCooldown = 0;
             document.getElementById('scoreDisplay').textContent = score;
             document.getElementById('gameOverOverlay').classList.remove('show');
+            
             if (gameLoopInterval) clearInterval(gameLoopInterval);
             gameLoopInterval = setInterval(gameLoop, 1000 / 60);
         }
+        
         function restartGame() {
             startGame();
         }
-
+        
         // === 控制系統 ===
-
+        
         // 1. 鍵盤控制（空白鍵）- 電腦使用
         document.addEventListener('keydown', function(e) {
             if (e.code === 'Space' && gameRunning && !gameOver) {
@@ -549,32 +744,26 @@
                 dropCircle();
             }
         });
-
+        
         // 2. 滑鼠點擊控制 - 電腦使用
         canvas.addEventListener('click', function(e) {
             if (gameRunning && !gameOver) {
                 dropCircle();
             }
         });
-
+        
         // 3. 觸控控制 - 手機使用
         canvas.addEventListener('touchstart', function(e) {
             if (gameRunning && !gameOver) {
-                e.preventDefault(); // 防止觸發滑鼠事件和頁面滾動
+                e.preventDefault();
                 dropCircle();
             }
         }, { passive: false });
-
+        
         // 頁面載入時自動載入圖片
         window.addEventListener('load', function() {
             loadImages();
         });
     </script>
-    <!-- 版權聲明 -->
-    <div style="position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
-                font-size: 12px; color: #666; text-align: center; z-index: 1000;">
-        © 2025 Watermelon Game - NMIXX Fan Project<br>
-        Images © JYP Entertainment. For non-commercial use only.
-    </div>
 </body>
 </html>
